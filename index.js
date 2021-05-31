@@ -38,3 +38,60 @@ const strState = makeState<string>()
 strState.setState('foo')
 console.log(strState.getState())
 // strState.setState(1) will fail!
+
+
+
+
+/* 
+
+We call makeState<number>() a "generic function" because its literally a 
+generic -- you have a choice to make it number-only or string-only.  And you know
+it's a generic function if it takes a type parameter.
+ */
+
+
+// technique of creating a generic allowing only string or number states.
+// prevent non-number and non-string states.
+
+function makeStateTwo<S extends string | number>() {
+    let state:S
+    function getState() {
+     return state;
+    }
+
+    function setState(x: S) {
+        state = x;
+    }
+  return {getState, setState}
+}
+
+// this function below will NOT work.
+// const makeBooleanState = makeStateTwo<boolean>();
+
+function makePair<F extends number | string,S extends boolean | F>() {
+    let pair: {first: F, second: S}
+
+    function getPair() {
+        return pair;
+    }
+    function setPair(x:F,y:S) {
+        return {
+            first: x,
+            second: y,
+        }
+    }
+
+    return {getPair, setPair}
+}
+
+makePair<number, boolean>()
+makePair<number, number>()
+makePair<string, boolean>()
+makePair<string, string>()
+
+
+
+// This will fail because the second
+// parameter must extend boolean | number,
+// but instead it’s string
+makePair<number, string>()
